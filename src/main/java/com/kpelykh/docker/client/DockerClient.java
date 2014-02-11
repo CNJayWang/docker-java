@@ -41,11 +41,11 @@ import java.util.UUID;
 public class DockerClient
 {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DockerClient.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(DockerClient.class);
 
     private static DockerClient instance;
-    private Client client;
-    private String restEndpointUrl;
+    protected Client client;
+    protected String restEndpointUrl;
 
     public DockerClient(String serverUrl) {
         restEndpointUrl = serverUrl + "/v1.8";
