@@ -129,6 +129,5 @@ public class Container {
 		public String getType() {
 			return type;
 		}
-
 	}
 }
