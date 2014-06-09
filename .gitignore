@@ -5,6 +5,7 @@
 *.swp
 .project
 .settings
+.classpath
 
 # Ignore all build/dist directories
 target
@@ -19,4 +20,8 @@ target
 # Ignore all log files
 *.log
 
+# Ignore all dot files
 .*
+
+#Ignore Test Output
+test-output

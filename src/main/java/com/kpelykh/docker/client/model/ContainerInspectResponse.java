@@ -1,16 +1,17 @@
 package com.kpelykh.docker.client.model;
 
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
-import java.util.Arrays;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
  * @author Konstantin Pelykh (kpelykh@gmail.com)
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContainerInspectResponse {
 
     @JsonProperty("ID")
@@ -32,7 +33,7 @@ public class ContainerInspectResponse {
     private ContainerState state;
 
     @JsonProperty("Image")
-    private String image;
+    private String imageId;
 
     @JsonProperty("NetworkSettings")
     private NetworkSettings networkSettings;
@@ -64,6 +65,12 @@ public class ContainerInspectResponse {
     @JsonProperty("HostConfig")
     private HostConfig hostConfig;
 
+    @JsonProperty("ExecDriver")
+    private String execDriver;
+    
+    @JsonProperty("MountLabel")
+    private String mountLabel;
+    
     public String getId() {
         return id;
     }
@@ -112,12 +119,12 @@ public class ContainerInspectResponse {
         this.state = state;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageId(String image) {
+        this.imageId = image;
     }
 
     public NetworkSettings getNetworkSettings() {
@@ -199,6 +206,22 @@ public class ContainerInspectResponse {
     public void setHostConfig(HostConfig hostConfig) {
         this.hostConfig = hostConfig;
     }
+    
+    public void setExecDriver(String execDriver) {
+		this.execDriver = execDriver;
+	}
+    
+    public String getExecDriver() {
+		return execDriver;
+	}
+    
+    public String getMountLabel() {
+		return mountLabel;
+	}
+    
+    public void setMountLabel(String mountLabel) {
+		this.mountLabel = mountLabel;
+	}
 
     public class NetworkSettings {
 
@@ -230,7 +253,7 @@ public class ContainerInspectResponse {
         @JsonProperty("StartedAt") public String startedAt;
         @JsonProperty("Ghost") public boolean ghost;
         @JsonProperty("FinishedAt") public String finishedAt;
-        @JsonProperty("Suspend") public boolean suspend;
+        @JsonProperty("Paused") public boolean paused;
 
         @Override
         public String toString() {
@@ -241,7 +264,7 @@ public class ContainerInspectResponse {
                     ", startedAt='" + startedAt + '\'' +
                     ", ghost=" + ghost +
                     ", finishedAt='" + finishedAt + '\'' +
-                    ", Suspend='" + suspend + '\'' +                    
+                    ", paused='" + paused + '\'' +                    
                     '}';
         }
     }

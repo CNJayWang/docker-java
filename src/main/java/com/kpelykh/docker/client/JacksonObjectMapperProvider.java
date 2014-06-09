@@ -3,8 +3,8 @@ package com.kpelykh.docker.client;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Provider
 public class JacksonObjectMapperProvider implements ContextResolver<ObjectMapper> {
@@ -12,7 +12,7 @@ public class JacksonObjectMapperProvider implements ContextResolver<ObjectMapper
 	private ObjectMapper mapper = new ObjectMapper();
 
 	public JacksonObjectMapperProvider() {
-		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 	@Override

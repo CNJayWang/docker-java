@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  *
@@ -43,6 +43,8 @@ public class ContainerConfig {
     // FIXME Is this the right type? -BJE
     @JsonProperty("ExposedPorts")         private Map<String, Object> exposedPorts = new HashMap<String, Object>();
     @JsonProperty("Ip")                   private String ip = "";
+    @JsonProperty("OnBuild")				private int[] onBuild;
+    @JsonProperty("Cpuset")					private String cpuset = "";
 
     
     public String getIp() {
@@ -265,7 +267,23 @@ public class ContainerConfig {
         return this;
     }
 
-    @Override
+    public int[] getOnBuild() {
+		return onBuild;
+	}
+
+	public void setOnBuild(int[] onBuild) {
+		this.onBuild = onBuild;
+	}
+
+	public String getCpuset() {
+		return cpuset;
+	}
+
+	public void setCpuset(String cpuset) {
+		this.cpuset = cpuset;
+	}
+
+	@Override
     public String toString() {
         return "ContainerConfig{" +
                 "hostName='" + hostName + '\'' +
@@ -292,6 +310,8 @@ public class ContainerConfig {
                 ", workingDir='" + workingDir + '\'' +
                 ", domainName='" + domainName + '\'' +
                 ", ip='" + ip + '\'' +
+                ", onBuild='" + Arrays.toString(onBuild) + '\'' +
+                ", cpuset='" + cpuset + '\'' +
                 '}';
     }
 }

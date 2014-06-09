@@ -18,11 +18,11 @@ import com.sun.jersey.api.client.WebResource;
 
 public class EnhancedDockerClient extends DockerClient {
 
-	public EnhancedDockerClient(String serverUrl) {
+	public EnhancedDockerClient(String serverUrl) throws DockerException {
 		super(serverUrl);
 	}
 	
-	public EnhancedDockerClient(String serverUrl, String version) {
+	public EnhancedDockerClient(String serverUrl, String version) throws DockerException {
 		super(serverUrl + version);
 	}
 
@@ -87,8 +87,8 @@ public class EnhancedDockerClient extends DockerClient {
 		return response;
 	}
 
-    public void suspend(String containerId) throws DockerException {
-        WebResource webResource = client.resource(restEndpointUrl + String.format("/containers/%s/suspend", containerId));
+    public void pause(String containerId) throws DockerException {
+        WebResource webResource = client.resource(restEndpointUrl + String.format("/containers/%s/pause", containerId));
 
         try {
             LOGGER.trace("POST: {}", webResource);
@@ -107,8 +107,8 @@ public class EnhancedDockerClient extends DockerClient {
         }
     }
     
-    public void resume(String containerId) throws DockerException {
-        WebResource webResource = client.resource(restEndpointUrl + String.format("/containers/%s/resume", containerId));
+    public void unPause(String containerId) throws DockerException {
+        WebResource webResource = client.resource(restEndpointUrl + String.format("/containers/%s/unpause", containerId));
 
         try {
             LOGGER.trace("POST: {}", webResource);

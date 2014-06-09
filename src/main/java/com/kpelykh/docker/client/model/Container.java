@@ -1,9 +1,10 @@
 package com.kpelykh.docker.client.model;
 
+import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
@@ -40,6 +41,9 @@ public class Container {
 
 	@JsonProperty("SizeRootFs")
 	private int sizeRootFs;
+	
+	@JsonProperty("Names")
+	private String[] names;
 
 	public String getId() {
 		return id;
@@ -76,12 +80,48 @@ public class Container {
 	public int getSizeRootFs() {
 		return sizeRootFs;
 	}
+	
+	public String[] getNames() {
+        return names;
+    }
+	
+	public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setCreated(long created) {
+        this.created = created;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public void setSizeRootFs(int sizeRootFs) {
+        this.sizeRootFs = sizeRootFs;
+    }
+
+    public void setNames(String[] names) {
+        this.names = names;
+    }
 
 	@Override
 	public String toString() {
 		return "Container{" + "id='" + id + '\'' + ", command='" + command + '\'' + ", image='" + image + '\''
 		      + ", created=" + created + ", status='" + status + '\'' + ", ports=" + ports + ", size=" + size
-		      + ", sizeRootFs=" + sizeRootFs + '}';
+		      + ", sizeRootFs=" + sizeRootFs + ", names=" + Arrays.toString(names) + '}';
 	}
 
 	@JsonIgnoreProperties(ignoreUnknown = true)

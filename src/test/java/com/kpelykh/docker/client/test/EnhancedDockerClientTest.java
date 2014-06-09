@@ -41,6 +41,7 @@ public class EnhancedDockerClientTest {
 	@Test
 	public void testChangeCgroup() throws Exception {
 		ContainerConfig containerConfig = buildCommonContainerConfig();
+		containerConfig.setCpuset("0");
 		String instanceId = docker.createContainer(containerConfig).getId();
 		tmpContainers.add(instanceId);
 
@@ -50,7 +51,7 @@ public class EnhancedDockerClientTest {
 		List<String> toRead = new ArrayList<String>();
 		toRead.add("cpu.shares");
 		List<WriteSubsystem> toWrite = new ArrayList<WriteSubsystem>();
-		WriteSubsystem w = new WriteSubsystem("cpuset.cpus", "0");
+		WriteSubsystem w = new WriteSubsystem("cpuset.cpus", "1");
 		toWrite.add(w);
 		List<Subsystem> subsystems = docker.changeCgroup(instanceId, toRead, toWrite);
 		Assert.assertEquals(2, subsystems.size());
@@ -70,23 +71,9 @@ public class EnhancedDockerClientTest {
 		Thread.sleep(2000);
 		docker.getMetric(instanceId);
 	}
-
-	@Test
-	public void testSuspendContainer() throws Exception {
-		ContainerConfig containerConfig = buildCommonContainerConfig();
-		String instanceId = docker.createContainer(containerConfig).getId();
-		tmpContainers.add(instanceId);
-
-		HostConfig hostConfig = new HostConfig();
-		docker.startContainer(instanceId, hostConfig);
-		Thread.sleep(100);
-		docker.suspend(instanceId);
-		ContainerInspectResponse response = docker.inspectContainer(instanceId);
-		Assert.assertEquals(true, response.getState().suspend);
-	}
 	
 	@Test
-	public void testResumeContainer() throws Exception {
+	public void testPauseContainer() throws Exception {
 		ContainerInspectResponse response = null;
 		ContainerConfig containerConfig = buildCommonContainerConfig();
 		String instanceId = docker.createContainer(containerConfig).getId();
@@ -95,13 +82,14 @@ public class EnhancedDockerClientTest {
 		HostConfig hostConfig = new HostConfig();
 		docker.startContainer(instanceId, hostConfig);
 		Thread.sleep(100);
-		docker.suspend(instanceId);
+		docker.pause(instanceId);
 		response = docker.inspectContainer(instanceId);
-		Assert.assertEquals(true, response.getState().suspend);
-		docker.resume(instanceId);
+		Assert.assertEquals(true, response.getState().paused);
+		docker.unPause(instanceId);
 		response = docker.inspectContainer(instanceId);
-		Assert.assertEquals(false, response.getState().suspend);
+		Assert.assertEquals(false, response.getState().paused);
 		Assert.assertEquals(true, response.getState().running);
+		Thread.sleep(100);
 	}
 	
     @Test
