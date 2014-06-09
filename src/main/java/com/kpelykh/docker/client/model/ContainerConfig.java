@@ -1,45 +1,68 @@
 package com.kpelykh.docker.client.model;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
  * @author Konstantin Pelykh (kpelykh@gmail.com)
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContainerConfig {
 
-    @JsonProperty("Hostname")     private String    hostName = "";
-    @JsonProperty("PortSpecs")    private String[]  portSpecs;
-    @JsonProperty("User")         private String    user = "";
-    @JsonProperty("Tty")          private boolean   tty = false;
-    @JsonProperty("OpenStdin")    private boolean   stdinOpen = false;
-    @JsonProperty("StdinOnce")    private boolean   stdInOnce = false;
-    @JsonProperty("Memory")       private long      memoryLimit = 0;
-    @JsonProperty("MemorySwap")   private long      memorySwap = 0;
-    @JsonProperty("CpuShares")    private int       cpuShares = 0;
-    @JsonProperty("AttachStdin")  private boolean   attachStdin = false;
-    @JsonProperty("AttachStdout") private boolean   attachStdout = false;
-    @JsonProperty("AttachStderr") private boolean   attachStderr = false;
-    @JsonProperty("Env")          private String[]  env;
-    @JsonProperty("Cmd")          private String[]  cmd;
-    @JsonProperty("Dns")          private String[]  dns;
-    @JsonProperty("Image")        private String    image;
-    @JsonProperty("Volumes")      private Object    volumes;
-    @JsonProperty("VolumesFrom")  private String    volumesFrom = "";
-    @JsonProperty("Entrypoint")   private String[]  entrypoint = new String[]{};
-    @JsonProperty("NetworkDisabled") private boolean networkDisabled = false;
-    @JsonProperty("Privileged")   private boolean privileged = false;
-    @JsonProperty("WorkingDir")   private String workingDir = "";
-    @JsonProperty("Domainname")   private String domainName = "";
+    @JsonProperty("Hostname")             private String    hostName = "";
+    @JsonProperty("PortSpecs")            private String[]  portSpecs;
+    @JsonProperty("User")                 private String    user = "";
+    @JsonProperty("Tty")                  private boolean   tty = false;
+    @JsonProperty("OpenStdin")            private boolean   stdinOpen = false;
+    @JsonProperty("StdinOnce")            private boolean   stdInOnce = false;
+    @JsonProperty("Memory")               private long      memoryLimit = 0;
+    @JsonProperty("MemorySwap")           private long      memorySwap = 0;
+    @JsonProperty("CpuShares")            private int       cpuShares = 0;
+    @JsonProperty("AttachStdin")          private boolean   attachStdin = false;
+    @JsonProperty("AttachStdout")         private boolean   attachStdout = false;
+    @JsonProperty("AttachStderr")         private boolean   attachStderr = false;
+    @JsonProperty("Env")                  private List<String>  env = new ArrayList<String>();
+    @JsonProperty("Cmd")                  private String[]  cmd;
+    @JsonProperty("Dns")                  private String[]  dns;
+    @JsonProperty("Image")                private String    image;
+    @JsonProperty("Volumes")              private Object    volumes = new HashMap<String, Map<String, String>>();
+    @JsonProperty("VolumesFrom")          private String    volumesFrom = "";
+    @JsonProperty("Entrypoint")           private String[]  entrypoint = new String[]{};
+    @JsonProperty("NetworkDisabled")      private boolean networkDisabled = false;
+    @JsonProperty("Privileged")           private boolean privileged = false;
+    @JsonProperty("WorkingDir")           private String workingDir = "";
+    @JsonProperty("Domainname")           private String domainName = "";
     // FIXME Is this the right type? -BJE
-    @JsonProperty("ExposedPorts")   private Map<String, ?> exposedPorts;
+    @JsonProperty("ExposedPorts")         private Map<String, Object> exposedPorts = new HashMap<String, Object>();
+    @JsonProperty("Ip")                   private String ip = "";
 
-    public Map<String, ?> getExposedPorts() {
+    
+    public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
+
+	public Map<String, ?> getExposedPorts() {
         return exposedPorts;
+    }
+    
+    public void addExposedPort(String key, Object value) {
+   	 exposedPorts.put(key, value);
     }
 
     public boolean isNetworkDisabled() {
@@ -179,11 +202,11 @@ public class ContainerConfig {
         return this;
     }
 
-    public String[] getEnv() {
+    public List<String> getEnv() {
         return env;
     }
 
-    public ContainerConfig setEnv(String[] env) {
+    public ContainerConfig setEnv(List<String> env) {
         this.env = env;
         return this;
     }
@@ -257,7 +280,7 @@ public class ContainerConfig {
                 ", attachStdin=" + attachStdin +
                 ", attachStdout=" + attachStdout +
                 ", attachStderr=" + attachStderr +
-                ", env=" + Arrays.toString(env) +
+                ", env=" + env +
                 ", cmd=" + Arrays.toString(cmd) +
                 ", dns=" + Arrays.toString(dns) +
                 ", image='" + image + '\'' +
@@ -268,6 +291,7 @@ public class ContainerConfig {
                 ", privileged=" + privileged +
                 ", workingDir='" + workingDir + '\'' +
                 ", domainName='" + domainName + '\'' +
+                ", ip='" + ip + '\'' +
                 '}';
     }
 }

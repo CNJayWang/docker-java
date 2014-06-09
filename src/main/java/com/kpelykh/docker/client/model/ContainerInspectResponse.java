@@ -229,7 +229,8 @@ public class ContainerInspectResponse {
         @JsonProperty("ExitCode") public int exitCode;
         @JsonProperty("StartedAt") public String startedAt;
         @JsonProperty("Ghost") public boolean ghost;
-        @JsonProperty("FinishedAt") private String finishedAt;
+        @JsonProperty("FinishedAt") public String finishedAt;
+        @JsonProperty("Suspend") public boolean suspend;
 
         @Override
         public String toString() {
@@ -240,6 +241,7 @@ public class ContainerInspectResponse {
                     ", startedAt='" + startedAt + '\'' +
                     ", ghost=" + ghost +
                     ", finishedAt='" + finishedAt + '\'' +
+                    ", Suspend='" + suspend + '\'' +                    
                     '}';
         }
     }

@@ -107,13 +107,13 @@ public class HostConfig {
                 '}';
     }
 
-    public class LxcConf {
+    public static class LxcConf {
         @JsonProperty("Key")
         public String key;
 
         @JsonProperty("Value")
         public String value;
-
+        
         public LxcConf(String key, String value) {
             this.key = key;
             this.value = value;

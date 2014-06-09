@@ -48,8 +48,8 @@ public class DockerClient
     protected String restEndpointUrl;
 
     public DockerClient(String serverUrl) {
-        restEndpointUrl = serverUrl + "/v1.8";
-        ClientConfig clientConfig = new DefaultClientConfig();
+        restEndpointUrl = serverUrl;
+        ClientConfig clientConfig = new DefaultClientConfig(JacksonObjectMapperProvider.class);
         clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
 
         SchemeRegistry schemeRegistry = new SchemeRegistry();
@@ -68,9 +68,9 @@ public class DockerClient
         //client = new UnixSocketClient(clientConfig);
 
         client.addFilter(new JsonClientFilter());        
-        client.addFilter(new LoggingFilter());
+//        client.addFilter(new LoggingFilter());
     }
-
+    
     /**
      ** MISC API
      **
