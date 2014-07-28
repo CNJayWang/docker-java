@@ -83,6 +83,20 @@ public class EnhancedDockerClientTest {
         Assert.assertEquals(ip, cir.getConfig().getIp());
         tmpContainers.add(ccr.getId());
     }
+    
+    @Test
+    public void testExecCommandInContainer() throws Exception {
+    	CreateContainerConfig containerConfig = buildCommonContainerConfig();
+        ContainerCreateResponse ccr = docker.createContainerCmd(containerConfig).exec();
+        Assert.assertNotNull(ccr.getId());
+        tmpContainers.add(ccr.getId());
+        
+        docker.startContainerCmd(ccr.getId()).exec();
+		Thread.sleep(2000);
+        String response = docker.execContainerCmd(ccr.getId()).withCommand("echo hello").exec();
+        Assert.assertEquals("hello", response);
+        
+    }
 	
 	private CreateContainerConfig buildCommonContainerConfig() {
 		CreateContainerConfig config = new CreateContainerConfig();

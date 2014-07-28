@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.github.dockerjava.client.command.CgroupContainerCmd;
 import com.github.dockerjava.client.command.CreateContainerCmd;
+import com.github.dockerjava.client.command.ExecContainerCmd;
 import com.github.dockerjava.client.command.MetricContainerCmd;
 import com.github.dockerjava.client.command.PauseContainerCmd;
 import com.github.dockerjava.client.command.UnpauseContainerCmd;
@@ -47,5 +48,9 @@ public class EnhancedDockerClient extends DockerClient {
 	
 	public UnpauseContainerCmd unpauseContainerCmd(String containerId) {
 		return new UnpauseContainerCmd(containerId).withBaseResource(baseResource);
+	}
+	
+	public ExecContainerCmd execContainerCmd(String containerId) {
+		return new ExecContainerCmd(containerId).withBaseResource(baseResource);
 	}
 }
