@@ -97,6 +97,32 @@ public class EnhancedDockerClientTest {
         Assert.assertEquals("hello", response);
         
     }
+    
+    @Test
+    public void testSweepContainer() throws Exception {
+    	CreateContainerConfig containerConfig = buildCommonContainerConfig();
+		String ip = "192.168.10.10/24@192.168.10.1";
+		containerConfig.withIp(ip);
+        ContainerCreateResponse ccr = docker.createContainerCmd(containerConfig).exec();
+        Assert.assertNotNull(ccr.getId());
+        docker.startContainerCmd(ccr.getId()).exec();
+        docker.sweepContainerCmd(ccr.getId()).exec();
+        ContainerInspectResponse cir = docker.inspectContainerCmd(ccr.getId()).exec();
+        Assert.assertEquals("", cir.getConfig().getIp());
+        Assert.assertEquals(true, cir.getConfig().isNetworkDisabled());
+        Assert.assertEquals("none", cir.getHostConfig().getNetworkMode());
+        tmpContainers.add(ccr.getId());
+    }
+    
+    @Test
+    public void testRemoveContainerWithCheckDevice() throws Exception {
+    	CreateContainerConfig containerConfig = buildCommonContainerConfig();
+        ContainerCreateResponse ccr = docker.createContainerCmd(containerConfig).exec();
+        Assert.assertNotNull(ccr.getId());
+        docker.startContainerCmd(ccr.getId()).exec();
+        docker.sweepContainerCmd(ccr.getId()).exec();
+        docker.removeContainerCmd(ccr.getId()).withCheckDevice().exec();
+    }
 	
 	private CreateContainerConfig buildCommonContainerConfig() {
 		CreateContainerConfig config = new CreateContainerConfig();

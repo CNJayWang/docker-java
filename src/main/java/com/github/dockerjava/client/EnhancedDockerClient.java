@@ -7,6 +7,7 @@ import com.github.dockerjava.client.command.CreateContainerCmd;
 import com.github.dockerjava.client.command.ExecContainerCmd;
 import com.github.dockerjava.client.command.MetricContainerCmd;
 import com.github.dockerjava.client.command.PauseContainerCmd;
+import com.github.dockerjava.client.command.SweepContainerCmd;
 import com.github.dockerjava.client.command.UnpauseContainerCmd;
 import com.github.dockerjava.client.model.CreateContainerConfig;
 import com.github.dockerjava.client.model.Subsystem;
@@ -52,5 +53,9 @@ public class EnhancedDockerClient extends DockerClient {
 	
 	public ExecContainerCmd execContainerCmd(String containerId) {
 		return new ExecContainerCmd(containerId).withBaseResource(baseResource);
+	}
+	
+	public SweepContainerCmd sweepContainerCmd(String containerId) {
+		return new SweepContainerCmd(containerId).withBaseResource(baseResource);
 	}
 }

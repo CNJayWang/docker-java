@@ -23,7 +23,7 @@ public class RemoveContainerCmd extends AbstrDockerCmd<RemoveContainerCmd, Void>
 
 	private String containerId;
 	
-	private boolean removeVolumes, force;
+	private boolean removeVolumes, force, checkDevice;
 	
 	public RemoveContainerCmd(String containerId) {
 		withContainerId(containerId);
@@ -49,11 +49,21 @@ public class RemoveContainerCmd extends AbstrDockerCmd<RemoveContainerCmd, Void>
 		return this;
 	}
 	
+	public RemoveContainerCmd withCheckDevice() {
+		return withCheckDevice(true);
+	}
+	
+	public RemoveContainerCmd withCheckDevice(boolean checkDevice) {
+		this.checkDevice = checkDevice;
+		return this;
+	}
+	
     @Override
     public String toString() {
         return new StringBuilder("rm ")
             .append(removeVolumes ? "--volumes=true" : "")
             .append(force ? "--force=true" : "")
+            .append(checkDevice ? "--check-device=true" : "")
             .append(containerId)
             .toString();
     }   
@@ -61,7 +71,10 @@ public class RemoveContainerCmd extends AbstrDockerCmd<RemoveContainerCmd, Void>
 	protected Void impl() throws DockerException {
 		Preconditions.checkState(!StringUtils.isEmpty(containerId), "Container ID can't be empty");
 
-		WebResource webResource = baseResource.path("/containers/" + containerId).queryParam("v", removeVolumes ? "1" : "0").queryParam("force", force ? "1" : "0");
+		WebResource webResource = baseResource.path("/containers/" + containerId)
+				.queryParam("v", removeVolumes ? "1" : "0")
+				.queryParam("force", force ? "1" : "0")
+				.queryParam("checkDevice", checkDevice ? "1" : "0");
 
 		try {
 			LOGGER.trace("DELETE: {}", webResource);
