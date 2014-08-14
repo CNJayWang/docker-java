@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dockerjava.client.DeviceIsBusyException;
 import com.github.dockerjava.client.DockerException;
 import com.google.common.base.Preconditions;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -89,6 +90,9 @@ public class RemoveContainerCmd extends AbstrDockerCmd<RemoveContainerCmd, Void>
 			} else if (exception.getResponse().getStatus() == 404) {
 				// should really throw a NotFoundException instead of silently ignoring the problem
 				LOGGER.warn(String.format("%s is an unrecognized container.", containerId));
+			} else if (exception.getResponse().getStatus() == 599) {
+				LOGGER.warn(String.format("Device is busy: %s.", containerId));
+				throw new DeviceIsBusyException();
 			} else if (exception.getResponse().getStatus() == 500) {
 				throw new DockerException("Server error", exception);
 			} else {
