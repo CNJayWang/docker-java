@@ -5,6 +5,9 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.lang.reflect.Method;
 
+import com.github.dockerjava.api.DockerException;
+import com.github.dockerjava.api.command.CreateContainerResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestResult;
@@ -14,14 +17,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.github.dockerjava.client.DockerException;
-import com.github.dockerjava.client.model.ContainerCreateResponse;
-
 /**
  * Unit test for DockerClient.
- * 
+ *
  * @author Konstantin Pelykh (kpelykh@gmail.com)
  */
+@Test(groups = "integration")
 public class DockerClientTest extends AbstractDockerClientTest {
 	public static final Logger LOG = LoggerFactory
 			.getLogger(DockerClientTest.class);
@@ -45,7 +46,7 @@ public class DockerClientTest extends AbstractDockerClientTest {
 		super.afterMethod(result);
 	}
 
-	
+
 	@Test
 	public void testRunShlex() throws DockerException {
 
@@ -59,14 +60,14 @@ public class DockerClientTest extends AbstractDockerClientTest {
 		for (String command : commands) {
 			LOG.info("Running command: [{}]", command);
 
-			ContainerCreateResponse container = dockerClient
+			CreateContainerResponse container = dockerClient
 					.createContainerCmd("busybox").withCmd(commands).exec();
 			dockerClient.startContainerCmd(container.getId());
-			tmpContainers.add(container.getId());
+			
 			int exitcode = dockerClient.waitContainerCmd(container.getId()).exec();
 			assertThat(exitcode, equalTo(0));
 		}
 	}
-	
-	
+
+
 }
