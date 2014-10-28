@@ -2,11 +2,17 @@ package com.github.dockerjava.core;
 
 import com.github.dockerjava.api.EnhancedDockerClient;
 import com.github.dockerjava.api.command.CgroupContainerCmd;
+import com.github.dockerjava.api.command.CreateExecCmd;
 import com.github.dockerjava.api.command.DockerCmdExecFactory;
+import com.github.dockerjava.api.command.ExecContainerCmd;
 import com.github.dockerjava.api.command.MetricContainerCmd;
+import com.github.dockerjava.api.command.StartExecCmd;
 import com.github.dockerjava.api.command.SweepContainerCmd;
 import com.github.dockerjava.core.command.CgroupContainerCmdImpl;
+import com.github.dockerjava.core.command.CreateExecCmdImpl;
+import com.github.dockerjava.core.command.ExecContainerCmdImpl;
 import com.github.dockerjava.core.command.MetricContainerCmdImpl;
+import com.github.dockerjava.core.command.StartExecCmdImpl;
 import com.github.dockerjava.core.command.SweepContainerCmdImpl;
 
 
@@ -61,5 +67,21 @@ public class EnhancedDockerClientImpl extends DockerClientImpl implements Enhanc
 	@Override
 	public MetricContainerCmd metricContainerCmd(String containerId) {
 		return new MetricContainerCmdImpl(getDockerCmdExecFactory().createMetricContainerCmdExec(), containerId);
+	}
+
+	@Override
+	public CreateExecCmd createExecCmd(String containerId) {
+		return new CreateExecCmdImpl(getDockerCmdExecFactory().createCreateExecCmdExec(), containerId);
+	}
+
+	@Override
+	public StartExecCmd startExecCmd(String execId) {
+		return new StartExecCmdImpl(getDockerCmdExecFactory().createStartExecCmdExec(), execId);
+	}
+	
+	public ExecContainerCmd execContainerCmd(String containerId) {
+		CreateExecCmd createExecCmd = createExecCmd(containerId);
+		StartExecCmd startExecCmd = startExecCmd(containerId);
+		return new ExecContainerCmdImpl(getDockerCmdExecFactory().createExecContainerCmdExec(createExecCmd, startExecCmd), containerId);
 	}
 }

@@ -26,9 +26,11 @@ import com.github.dockerjava.api.command.CommitCmd;
 import com.github.dockerjava.api.command.ContainerDiffCmd;
 import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerCmd;
+import com.github.dockerjava.api.command.CreateExecCmd;
 import com.github.dockerjava.api.command.CreateImageCmd;
 import com.github.dockerjava.api.command.DockerCmdExecFactory;
 import com.github.dockerjava.api.command.EventsCmd;
+import com.github.dockerjava.api.command.ExecContainerCmd;
 import com.github.dockerjava.api.command.InfoCmd;
 import com.github.dockerjava.api.command.InspectContainerCmd;
 import com.github.dockerjava.api.command.InspectImageCmd;
@@ -46,6 +48,8 @@ import com.github.dockerjava.api.command.RemoveImageCmd;
 import com.github.dockerjava.api.command.RestartContainerCmd;
 import com.github.dockerjava.api.command.SearchImagesCmd;
 import com.github.dockerjava.api.command.StartContainerCmd;
+import com.github.dockerjava.api.command.StartExecCmd;
+import com.github.dockerjava.api.command.StartExecCmd.Exec;
 import com.github.dockerjava.api.command.StopContainerCmd;
 import com.github.dockerjava.api.command.SweepContainerCmd;
 import com.github.dockerjava.api.command.TagImageCmd;
@@ -310,6 +314,22 @@ public class DockerCmdExecFactoryImpl implements DockerCmdExecFactory {
 	@Override
 	public MetricContainerCmd.Exec createMetricContainerCmdExec() {
 		return new MetricContainerCmdExec(getBaseResource());
+	}
+	
+	@Override
+	public CreateExecCmd.Exec createCreateExecCmdExec() {
+		return new CreateExecCmdExec(getBaseResource());
+	}
+
+	@Override
+	public Exec createStartExecCmdExec() {
+		return new StartExecCmdExec(getBaseResource());
+	}
+	
+	@Override
+	public ExecContainerCmd.Exec createExecContainerCmdExec(CreateExecCmd createExecCmd,
+			StartExecCmd startExecCmd) {
+		return new ExecContainerCmdExec(createExecCmd, startExecCmd, getBaseResource());
 	}
 
     @Override

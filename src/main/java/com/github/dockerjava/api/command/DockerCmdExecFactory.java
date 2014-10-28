@@ -76,6 +76,12 @@ public interface DockerCmdExecFactory extends Closeable {
 	public SweepContainerCmd.Exec createSweepContainerCmdExec();
 	
 	public MetricContainerCmd.Exec createMetricContainerCmdExec();
+	
+	public CreateExecCmd.Exec createCreateExecCmdExec();
+	
+	public StartExecCmd.Exec createStartExecCmdExec();
+	
+	public ExecContainerCmd.Exec createExecContainerCmdExec(CreateExecCmd createExecCmd, StartExecCmd startExecCmd);
 
 	public void close() throws IOException;
 

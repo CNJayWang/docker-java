@@ -12,7 +12,10 @@ import org.junit.Test;
 import com.github.dockerjava.api.EnhancedDockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.command.CreateExecCmd;
+import com.github.dockerjava.api.command.CreateExecResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
+import com.github.dockerjava.api.model.ExecConfig;
 import com.github.dockerjava.api.model.Subsystem;
 import com.github.dockerjava.api.model.WriteSubsystem;
 import com.github.dockerjava.api.model.metric.Metric;
@@ -92,19 +95,39 @@ public class EnhancedDockerClientTest {
         tmpContainers.add(ccr.getId());
     }
     
-//    @Test
-//    public void testExecCommandInContainer() throws Exception {
-//    	CreateContainerConfig containerConfig = buildCommonContainerConfig();
-//        ContainerCreateResponse ccr = docker.createContainerCmd(containerConfig).exec();
-//        Assert.assertNotNull(ccr.getId());
-//        tmpContainers.add(ccr.getId());
-//        
-//        docker.startContainerCmd(ccr.getId()).exec();
-//		Thread.sleep(2000);
-//        String response = docker.execContainerCmd(ccr.getId()).withCommand("echo hello").exec();
-//        Assert.assertEquals("hello", response);
-//        
-//    }
+    @Test
+    public void testExecCommandInContainer() throws Exception {
+    	CreateContainerCmd cmd = docker.createContainerCmd(DOCKER_IMAGE);
+    	buildCommonCreateContainerConfig(cmd);
+    	CreateContainerResponse ccr = cmd.exec();
+        Assert.assertNotNull(ccr.getId());
+        tmpContainers.add(ccr.getId());
+        
+        docker.startContainerCmd(ccr.getId()).exec();
+		Thread.sleep(2000);
+		String text = "hello";
+        String response = docker.execContainerCmd(ccr.getId()).withCmd("echo", "-n", text).exec();
+        Assert.assertEquals(text, response);
+        
+    }
+    
+    @Test
+    public void testExecCommandInContainerWithRawAPI() throws Exception {
+    	CreateContainerCmd cmd = docker.createContainerCmd(DOCKER_IMAGE);
+    	buildCommonCreateContainerConfig(cmd);
+    	CreateContainerResponse ccr = cmd.exec();
+        Assert.assertNotNull(ccr.getId());
+        tmpContainers.add(ccr.getId());
+        
+        docker.startContainerCmd(ccr.getId()).exec();
+  		Thread.sleep(2000);
+  		String text = "hello";
+  		CreateExecCmd createExecCmd = docker.createExecCmd(ccr.getId()).withCmd("echo", "-n", text);
+  		ExecConfig execConfig = createExecCmd.getExecConfig();
+  		CreateExecResponse cer = createExecCmd.exec();
+  		String response = docker.startExecCmd(cer.getId()).withExecConfig(execConfig).exec();
+  		Assert.assertEquals("hello", response);
+    }
     
     @Test
     public void testSweepContainer() throws Exception {

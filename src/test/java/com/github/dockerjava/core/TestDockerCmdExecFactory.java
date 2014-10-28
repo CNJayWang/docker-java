@@ -15,10 +15,12 @@ import com.github.dockerjava.api.command.ContainerDiffCmd;
 import com.github.dockerjava.api.command.CopyFileFromContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.command.CreateExecCmd;
 import com.github.dockerjava.api.command.CreateImageCmd;
 import com.github.dockerjava.api.command.CreateImageResponse;
 import com.github.dockerjava.api.command.DockerCmdExecFactory;
 import com.github.dockerjava.api.command.EventsCmd;
+import com.github.dockerjava.api.command.ExecContainerCmd;
 import com.github.dockerjava.api.command.InfoCmd;
 import com.github.dockerjava.api.command.InspectContainerCmd;
 import com.github.dockerjava.api.command.InspectImageCmd;
@@ -36,6 +38,7 @@ import com.github.dockerjava.api.command.RemoveImageCmd;
 import com.github.dockerjava.api.command.RestartContainerCmd;
 import com.github.dockerjava.api.command.SearchImagesCmd;
 import com.github.dockerjava.api.command.StartContainerCmd;
+import com.github.dockerjava.api.command.StartExecCmd;
 import com.github.dockerjava.api.command.StopContainerCmd;
 import com.github.dockerjava.api.command.SweepContainerCmd;
 import com.github.dockerjava.api.command.TagImageCmd;
@@ -286,11 +289,28 @@ public class TestDockerCmdExecFactory implements DockerCmdExecFactory {
 		return delegate.createMetricContainerCmdExec();
 	}
 
+	@Override
+	public CreateExecCmd.Exec createCreateExecCmdExec() {
+		return delegate.createCreateExecCmdExec();
+	}
+
+	@Override
+	public StartExecCmd.Exec createStartExecCmdExec() {
+		return delegate.createStartExecCmdExec();
+	}
+	
+	@Override
+	public ExecContainerCmd.Exec createExecContainerCmdExec(
+			CreateExecCmd createExecCmd, StartExecCmd startExecCmd) {
+		return delegate.createExecContainerCmdExec(createExecCmd, startExecCmd);
+	}
+	
 	public List<String> getContainerNames() {
 		return new ArrayList<String>(containerNames);
 	}
 	
 	public List<String> getImageNames() {
 		return new ArrayList<String>(imageNames);
-	}	
+	}
+	
 }
