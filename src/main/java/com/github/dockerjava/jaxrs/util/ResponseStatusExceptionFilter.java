@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.github.dockerjava.api.BadRequestException;
 import com.github.dockerjava.api.ConflictException;
+import com.github.dockerjava.api.DeviceIsBusyException;
 import com.github.dockerjava.api.DockerException;
 import com.github.dockerjava.api.InternalServerErrorException;
 import com.github.dockerjava.api.NotAcceptableException;
@@ -51,6 +52,8 @@ public class ResponseStatusExceptionFilter implements ClientResponseFilter {
 			throw new ConflictException(getBodyAsMessage(responseContext));
 		case 500:
 			throw new InternalServerErrorException(getBodyAsMessage(responseContext));
+		case 599:
+			throw new DeviceIsBusyException(getBodyAsMessage(responseContext));
 		default:
 			throw new DockerException(getBodyAsMessage(responseContext), status);
 		}
