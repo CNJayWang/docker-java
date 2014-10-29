@@ -35,6 +35,7 @@ import com.github.dockerjava.api.command.InfoCmd;
 import com.github.dockerjava.api.command.InspectContainerCmd;
 import com.github.dockerjava.api.command.InspectImageCmd;
 import com.github.dockerjava.api.command.KillContainerCmd;
+import com.github.dockerjava.api.command.LimitContainerCmd;
 import com.github.dockerjava.api.command.ListContainersCmd;
 import com.github.dockerjava.api.command.ListImagesCmd;
 import com.github.dockerjava.api.command.LogContainerCmd;
@@ -330,6 +331,11 @@ public class DockerCmdExecFactoryImpl implements DockerCmdExecFactory {
 	public ExecContainerCmd.Exec createExecContainerCmdExec(CreateExecCmd createExecCmd,
 			StartExecCmd startExecCmd) {
 		return new ExecContainerCmdExec(createExecCmd, startExecCmd, getBaseResource());
+	}
+	
+	@Override
+	public LimitContainerCmd.Exec createLimitContainerCmdExec() {
+		return new LimitContainerCmdExec(getBaseResource());
 	}
 
     @Override

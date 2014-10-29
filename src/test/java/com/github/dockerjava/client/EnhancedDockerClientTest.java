@@ -16,6 +16,7 @@ import com.github.dockerjava.api.command.CreateExecCmd;
 import com.github.dockerjava.api.command.CreateExecResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.model.ExecConfig;
+import com.github.dockerjava.api.model.LimitationConfig;
 import com.github.dockerjava.api.model.Subsystem;
 import com.github.dockerjava.api.model.WriteSubsystem;
 import com.github.dockerjava.api.model.metric.Metric;
@@ -155,6 +156,34 @@ public class EnhancedDockerClientTest {
         docker.startContainerCmd(ccr.getId()).exec();
         docker.sweepContainerCmd(ccr.getId()).exec();
         docker.removeContainerCmd(ccr.getId()).withCheckDevice().exec();
+    }
+    
+    @Test
+    public void testLimitContainerResource() throws Exception {
+    	CreateContainerCmd cmd = docker.createContainerCmd(DOCKER_IMAGE);
+		buildCommonCreateContainerConfig(cmd);
+		cmd.withMemoryLimit(100 * 1024 * 1024);
+		cmd.withCpuset("0");
+		cmd.withCpuShares(500);
+		CreateContainerResponse ccr = cmd.exec();
+        Assert.assertNotNull(ccr.getId());
+        tmpContainers.add(ccr.getId());
+        docker.startContainerCmd(ccr.getId()).exec();
+  		Thread.sleep(2000);
+        LimitationConfig limitationConfig = new LimitationConfig();
+        long newMemoryLimit = 200 * 1024 * 1024;
+        String newCpuset = "1";
+        int newCpuShares = 1024;
+        limitationConfig.setMemoryLimit(newMemoryLimit);
+        limitationConfig.setCpuset(newCpuset);
+        limitationConfig.setCpuShares(newCpuShares);
+        limitationConfig.setSaveChanges(true);
+        docker.limitContainerCmd(limitationConfig, ccr.getId()).exec();
+        docker.restartContainerCmd(ccr.getId()).exec();
+        InspectContainerResponse cir = docker.inspectContainerCmd(ccr.getId()).exec();
+        Assert.assertEquals(newMemoryLimit, cir.getConfig().getMemoryLimit());
+        Assert.assertEquals(newCpuset, cir.getConfig().getCpuset());
+        Assert.assertEquals(newCpuShares, cir.getConfig().getCpuShares());
     }
 	
 	private void buildCommonCreateContainerConfig(CreateContainerCmd cmd) {

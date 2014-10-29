@@ -6,15 +6,18 @@ import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateExecCmd;
 import com.github.dockerjava.api.command.DockerCmdExecFactory;
 import com.github.dockerjava.api.command.ExecContainerCmd;
+import com.github.dockerjava.api.command.LimitContainerCmd;
 import com.github.dockerjava.api.command.MetricContainerCmd;
 import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.command.StartExecCmd;
 import com.github.dockerjava.api.command.SweepContainerCmd;
 import com.github.dockerjava.api.model.CreateContainerConfig;
+import com.github.dockerjava.api.model.LimitationConfig;
 import com.github.dockerjava.api.model.StartContainerConfig;
 import com.github.dockerjava.core.command.CgroupContainerCmdImpl;
 import com.github.dockerjava.core.command.CreateExecCmdImpl;
 import com.github.dockerjava.core.command.ExecContainerCmdImpl;
+import com.github.dockerjava.core.command.LimitContainerCmdImpl;
 import com.github.dockerjava.core.command.MetricContainerCmdImpl;
 import com.github.dockerjava.core.command.StartExecCmdImpl;
 import com.github.dockerjava.core.command.SweepContainerCmdImpl;
@@ -102,5 +105,11 @@ public class EnhancedDockerClientImpl extends DockerClientImpl implements Enhanc
 		StartContainerCmd cmd = startContainerCmd(containerId);
 		CommandUtils.popuateStartContainerCmd(cmd, startContainerConfig);
 		return cmd;
+	}
+
+	@Override
+	public LimitContainerCmd limitContainerCmd(
+			LimitationConfig limitationConfig, String containerId) {
+		return new LimitContainerCmdImpl(getDockerCmdExecFactory().createLimitContainerCmdExec(), limitationConfig, containerId);
 	}
 }
