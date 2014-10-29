@@ -49,7 +49,7 @@ public class StartContainerCmdImpl extends AbstrDockerCmd<StartContainerCmd, Voi
 	private String[] dnsSearch;
 
 	@JsonProperty("VolumesFrom")
-	private String volumesFrom;
+	private String[] volumesFrom;
 	
 	@JsonProperty("NetworkMode")          
     private String networkMode = "bridge";
@@ -65,9 +65,6 @@ public class StartContainerCmdImpl extends AbstrDockerCmd<StartContainerCmd, Voi
 	
 	@JsonProperty("CapDrop")
 	private String[] capDrop;
-	
-	@JsonProperty("Ip")
-	private String ip;
 	
 	public StartContainerCmdImpl(StartContainerCmd.Exec exec, String containerId) {
 		super(exec);
@@ -117,7 +114,7 @@ public class StartContainerCmdImpl extends AbstrDockerCmd<StartContainerCmd, Voi
 	}
 
 	@Override
-	public String getVolumesFrom() {
+	public String[] getVolumesFrom() {
 		return volumesFrom;
 	}
 
@@ -209,7 +206,7 @@ public class StartContainerCmdImpl extends AbstrDockerCmd<StartContainerCmd, Voi
 	}
 
 	@Override
-	public StartContainerCmd withVolumesFrom(String volumesFrom) {
+	public StartContainerCmd withVolumesFrom(String... volumesFrom) {
 		Preconditions
 				.checkNotNull(volumesFrom, "volumesFrom was not specified");
 		this.volumesFrom = volumesFrom;
@@ -273,15 +270,4 @@ public class StartContainerCmdImpl extends AbstrDockerCmd<StartContainerCmd, Voi
 		return super.exec();
 	}
 
-	@Override
-	public String getIp() {
-		return this.ip;
-	}
-
-	@Override
-	public StartContainerCmd withIp(String ip) {
-		Preconditions.checkNotNull(ip, "ip was not specified");
-		this.ip = ip;
-		return this;
-	}
 }

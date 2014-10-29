@@ -15,6 +15,8 @@ public interface BaseExecCmd<CMD_T extends DockerCmd<RES_T>, RES_T> extends Dock
 	public boolean isAttachStderr();
 
 	public boolean isDetach();
+	
+	public boolean isPrivileged();
 
 	public String[] getCmd();
 
@@ -31,4 +33,6 @@ public interface BaseExecCmd<CMD_T extends DockerCmd<RES_T>, RES_T> extends Dock
 	public CMD_T withCmd(String... cmd);
 
 	public CMD_T withExecConfig(ExecConfig execConfig);
+	
+	public CMD_T withPrivileged(boolean privileged);
 }

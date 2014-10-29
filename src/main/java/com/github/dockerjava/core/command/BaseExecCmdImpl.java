@@ -98,4 +98,15 @@ public abstract class BaseExecCmdImpl<CMD_T extends DockerCmd<RES_T>, RES_T> ext
 		return (CMD_T) this;
 	}
 
+	@Override
+	public boolean isPrivileged() {
+		return execConfig.isPrivileged();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public CMD_T withPrivileged(boolean privileged) {
+		this.execConfig.setPrivileged(privileged);
+		return (CMD_T) this;
+	}
 }

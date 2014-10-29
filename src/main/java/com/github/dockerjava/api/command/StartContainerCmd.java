@@ -30,7 +30,7 @@ public interface StartContainerCmd extends DockerCmd<Void> {
 
 	public String[] getDnsSearch();
 
-	public String getVolumesFrom();
+	public String[] getVolumesFrom();
 
 	public String getContainerId();
 
@@ -43,8 +43,6 @@ public interface StartContainerCmd extends DockerCmd<Void> {
 	public String[] getCapAdd();
 
 	public String[] getCapDrop();
-	
-	public String getIp();
 
 	public StartContainerCmd withBinds(Bind... binds);
 
@@ -71,7 +69,7 @@ public interface StartContainerCmd extends DockerCmd<Void> {
 	 */
 	public StartContainerCmd withDnsSearch(String... dnsSearch);
 
-	public StartContainerCmd withVolumesFrom(String volumesFrom);
+	public StartContainerCmd withVolumesFrom(String... volumesFrom);
 
 	public StartContainerCmd withContainerId(String containerId);
 
@@ -115,8 +113,6 @@ public interface StartContainerCmd extends DockerCmd<Void> {
 	 * "CHOWN" prevents the container from changing the owner of any files.
 	 */
 	public StartContainerCmd withCapDrop(String... capDrop);
-	
-	public StartContainerCmd withIp(String ip);
 
 	/**
 	 * @throws NotFoundException

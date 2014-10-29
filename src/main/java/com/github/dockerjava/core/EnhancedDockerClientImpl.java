@@ -2,18 +2,23 @@ package com.github.dockerjava.core;
 
 import com.github.dockerjava.api.EnhancedDockerClient;
 import com.github.dockerjava.api.command.CgroupContainerCmd;
+import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateExecCmd;
 import com.github.dockerjava.api.command.DockerCmdExecFactory;
 import com.github.dockerjava.api.command.ExecContainerCmd;
 import com.github.dockerjava.api.command.MetricContainerCmd;
+import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.command.StartExecCmd;
 import com.github.dockerjava.api.command.SweepContainerCmd;
+import com.github.dockerjava.api.model.CreateContainerConfig;
+import com.github.dockerjava.api.model.StartContainerConfig;
 import com.github.dockerjava.core.command.CgroupContainerCmdImpl;
 import com.github.dockerjava.core.command.CreateExecCmdImpl;
 import com.github.dockerjava.core.command.ExecContainerCmdImpl;
 import com.github.dockerjava.core.command.MetricContainerCmdImpl;
 import com.github.dockerjava.core.command.StartExecCmdImpl;
 import com.github.dockerjava.core.command.SweepContainerCmdImpl;
+import com.github.dockerjava.jaxrs.util.CommandUtils;
 
 
 
@@ -83,5 +88,19 @@ public class EnhancedDockerClientImpl extends DockerClientImpl implements Enhanc
 		CreateExecCmd createExecCmd = createExecCmd(containerId);
 		StartExecCmd startExecCmd = startExecCmd(containerId);
 		return new ExecContainerCmdImpl(getDockerCmdExecFactory().createExecContainerCmdExec(createExecCmd, startExecCmd), containerId);
+	}
+
+	@Override
+	public CreateContainerCmd createContainerCmd(CreateContainerConfig createContainerConfig) {
+		CreateContainerCmd cmd = createContainerCmd(createContainerConfig.getImage());
+		CommandUtils.popuateCreateContainerCmd(cmd, createContainerConfig);
+		return cmd;
+	}
+
+	@Override
+	public StartContainerCmd startContainerCmd(String containerId, StartContainerConfig startContainerConfig) {
+		StartContainerCmd cmd = startContainerCmd(containerId);
+		CommandUtils.popuateStartContainerCmd(cmd, startContainerConfig);
+		return cmd;
 	}
 }
