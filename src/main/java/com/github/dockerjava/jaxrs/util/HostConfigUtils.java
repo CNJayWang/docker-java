@@ -1,7 +1,7 @@
 package com.github.dockerjava.jaxrs.util;
 
-import com.github.dockerjava.api.command.InspectContainerResponse.HostConfig;
 import com.github.dockerjava.api.model.Bind;
+import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Link;
 import com.github.dockerjava.api.model.StartContainerConfig;
 
@@ -27,9 +27,9 @@ public class HostConfigUtils {
 		}
 		
 		if (hostConfig.getLinks() != null) {
-			Link[] links = new Link[hostConfig.getLinks().length];
-			for (int i = 0; i < hostConfig.getLinks().length; i++) {
-				links[i] = Link.parse(hostConfig.getLinks()[i]);
+			Link[] links = new Link[hostConfig.getLinks().getLinks().length];
+			for (int i = 0; i < hostConfig.getLinks().getLinks().length; i++) {
+				links[i] = hostConfig.getLinks().getLinks()[i];
 			}
 			startContainerConfig.setLinks(links);	
 		}

@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.model.Ports.Binding;
 
-public class PortsTest {
+public class Ports_SerializingTest {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final String jsonWithDoubleBindingForOnePort = 
 			"{\"80/tcp\":[{\"HostIp\":\"10.0.0.1\",\"HostPort\":\"80\"},{\"HostIp\":\"10.0.0.2\",\"HostPort\":\"80\"}]}";
@@ -33,5 +33,10 @@ public class PortsTest {
 		ports.bind(ExposedPort.tcp(80), new Binding("10.0.0.2", 80));
 		assertEquals(objectMapper.writeValueAsString(ports), jsonWithDoubleBindingForOnePort);
 	}
-	
+
+	@Test
+	public void serializingEmptyBinding() throws Exception {
+		Ports ports = new Ports(ExposedPort.tcp(80), new Binding(null, null));
+		assertEquals(objectMapper.writeValueAsString(ports), "{\"80/tcp\":[{\"HostIp\":\"\",\"HostPort\":\"\"}]}");
+	}
 }

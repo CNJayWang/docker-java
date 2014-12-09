@@ -9,10 +9,12 @@ import com.github.dockerjava.api.NotModifiedException;
 import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Binds;
+import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.Device;
 import com.github.dockerjava.api.model.Link;
 import com.github.dockerjava.api.model.Links;
 import com.github.dockerjava.api.model.LxcConf;
+import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Ports;
 import com.github.dockerjava.api.model.RestartPolicy;
 import com.google.common.base.Preconditions;
@@ -61,10 +63,10 @@ public class StartContainerCmdImpl extends AbstrDockerCmd<StartContainerCmd, Voi
 	private RestartPolicy restartPolicy;
 	
 	@JsonProperty("CapAdd")
-	private String[] capAdd;
+	private Capability[] capAdd;
 	
 	@JsonProperty("CapDrop")
-	private String[] capDrop;
+	private Capability[] capDrop;
 	
 	public StartContainerCmdImpl(StartContainerCmd.Exec exec, String containerId) {
 		super(exec);
@@ -139,12 +141,12 @@ public class StartContainerCmdImpl extends AbstrDockerCmd<StartContainerCmd, Voi
     }
     
     @Override
-    public String[] getCapAdd() {
+    public Capability[] getCapAdd() {
     	return capAdd;
     }
     
     @Override
-    public String[] getCapDrop() {
+    public Capability[] getCapDrop() {
     	return capDrop;
     }
 
@@ -176,6 +178,16 @@ public class StartContainerCmdImpl extends AbstrDockerCmd<StartContainerCmd, Voi
 		Preconditions.checkNotNull(portBindings,
 				"portBindings was not specified");
 		this.portBindings = portBindings;
+		return this;
+	}
+
+	@Override
+	public StartContainerCmd withPortBindings(PortBinding... portBindings) {
+		Preconditions.checkNotNull(portBindings, "portBindings was not specified");
+		if (this.portBindings == null) {
+			this.portBindings = new Ports();
+		}
+		this.portBindings.add(portBindings);
 		return this;
 	}
 
@@ -243,14 +255,14 @@ public class StartContainerCmdImpl extends AbstrDockerCmd<StartContainerCmd, Voi
    	}
     
     @Override
-	public StartContainerCmd withCapAdd(String... capAdd) {
+	public StartContainerCmd withCapAdd(Capability... capAdd) {
 		Preconditions.checkNotNull(capAdd, "capAdd was not specified");
 		this.capAdd = capAdd;
 		return this;
 	}
     
     @Override
-	public StartContainerCmd withCapDrop(String... capDrop) {
+	public StartContainerCmd withCapDrop(Capability... capDrop) {
 		Preconditions.checkNotNull(capDrop, "capDrop was not specified");
 		this.capDrop = capDrop;
 		return this;

@@ -8,8 +8,10 @@ import com.github.dockerjava.api.ConflictException;
 import com.github.dockerjava.api.NotFoundException;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.ExposedPorts;
+import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
 import com.google.common.base.Preconditions;
@@ -38,7 +40,6 @@ public class CreateContainerCmdImpl extends AbstrDockerCmd<CreateContainerCmd, C
     @JsonProperty("StdinOnce")    private boolean   stdInOnce = false;
     @JsonProperty("Env")          private String[]  env;
     @JsonProperty("Cmd")          private String[]  cmd;
-    @JsonProperty("Dns")          private String[]  dns;
     @JsonProperty("Image")        private String    image;
     @JsonProperty("Volumes")      private Volumes volumes = new Volumes();
     @JsonProperty("VolumesFrom")  private String[]    volumesFrom = new String[]{};
@@ -46,6 +47,7 @@ public class CreateContainerCmdImpl extends AbstrDockerCmd<CreateContainerCmd, C
     @JsonProperty("DisableNetwork") private boolean disableNetwork = false;
     @JsonProperty("ExposedPorts")   private ExposedPorts exposedPorts = new ExposedPorts();
     @JsonProperty("Ip")   			private String ip = "";
+    @JsonProperty("HostConfig")   private HostConfig hostConfig = new HostConfig();
 	
 	public CreateContainerCmdImpl(CreateContainerCmd.Exec exec, String image) {
 		super(exec);
@@ -256,13 +258,13 @@ public class CreateContainerCmdImpl extends AbstrDockerCmd<CreateContainerCmd, C
     }
 
     @Override
-	public String[] getDns() {
-        return dns;
+    public String[] getDns() {
+        return hostConfig.getDns();
     }
 
     @Override
-	public CreateContainerCmdImpl withDns(String... dns) {
-        this.dns = dns;
+    public CreateContainerCmdImpl withDns(String... dns) {
+        hostConfig.setDns(dns);
         return this;
     }
 
@@ -322,6 +324,40 @@ public class CreateContainerCmdImpl extends AbstrDockerCmd<CreateContainerCmd, C
 		return this;
 	}
 
+    @Override
+    public HostConfig getHostConfig() {
+    	return hostConfig;
+    }
+    
+    @Override
+    public CreateContainerCmd withHostConfig(HostConfig hostConfig) {
+    	Preconditions.checkNotNull(hostConfig, "no host config was specified");
+    	this.hostConfig = hostConfig;
+    	return this;
+    }
+    
+    @Override
+    public Capability[] getCapAdd() {
+        return hostConfig.getCapAdd();
+    }
+
+    @Override
+    public CreateContainerCmd withCapAdd(Capability... capAdd) {
+        hostConfig.setCapAdd(capAdd);
+        return this;
+    }
+
+    @Override
+    public Capability[] getCapDrop() {
+        return hostConfig.getCapDrop();
+    }
+
+    @Override
+    public CreateContainerCmd withCapDrop(Capability... capDrop) {
+        hostConfig.setCapDrop(capDrop);
+        return this;
+    }
+
 	@Override
     public String toString() {
         return new ToStringBuilder(this).append("create container ")
@@ -338,4 +374,5 @@ public class CreateContainerCmdImpl extends AbstrDockerCmd<CreateContainerCmd, C
     public CreateContainerResponse exec() throws NotFoundException, ConflictException {
     	return super.exec();
     }
+
 }    

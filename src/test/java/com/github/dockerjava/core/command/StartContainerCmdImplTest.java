@@ -1,6 +1,7 @@
 package com.github.dockerjava.core.command;
 
 import static com.github.dockerjava.api.model.AccessMode.ro;
+import static com.github.dockerjava.api.model.Capability.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -100,18 +101,15 @@ public class StartContainerCmdImplTest extends AbstractDockerClientTest {
 
 		CreateContainerResponse container = dockerClient
 				.createContainerCmd("busybox")
-				.withCmd("true").withDns(aDnsServer, anotherDnsServer).exec();
+				.withCmd("true").exec();
 
 		LOG.info("Created container {}", container.toString());
 
 		assertThat(container.getId(), not(isEmptyString()));
 
-		InspectContainerResponse inspectContainerResponse = dockerClient
-				.inspectContainerCmd(container.getId()).exec();
-
 		dockerClient.startContainerCmd(container.getId()).withDns(aDnsServer, anotherDnsServer).exec();
 
-		inspectContainerResponse = dockerClient.inspectContainerCmd(container
+		InspectContainerResponse inspectContainerResponse = dockerClient.inspectContainerCmd(container
 				.getId()).exec();
 
 		assertThat(Arrays.asList(inspectContainerResponse.getHostConfig().getDns()),
@@ -228,7 +226,7 @@ public class StartContainerCmdImplTest extends AbstractDockerClientTest {
 		assertThat(inspectContainerResponse2.getId(), not(isEmptyString()));
 		assertThat(inspectContainerResponse2.getHostConfig(), is(notNullValue()));
 		assertThat(inspectContainerResponse2.getHostConfig().getLinks(), is(notNullValue()));
-		assertThat(inspectContainerResponse2.getHostConfig().getLinks(), equalTo(new String[] {"/container1:/container2/container1Link"}));
+		assertThat(inspectContainerResponse2.getHostConfig().getLinks().getLinks(), equalTo(new Link[] {new Link("container1","container1Link")}));
 		assertThat(inspectContainerResponse2.getId(), startsWith(container2.getId()));
 		assertThat(inspectContainerResponse2.getName(), equalTo("/container2"));
 		assertThat(inspectContainerResponse2.getImageId(), not(isEmptyString()));
@@ -323,8 +321,8 @@ public class StartContainerCmdImplTest extends AbstractDockerClientTest {
         assertThat(container.getId(), not(isEmptyString()));
 
         dockerClient.startContainerCmd(container.getId())
-        	.withCapAdd("NET_ADMIN")
-        	.withCapDrop("MKNOD").exec();
+        	.withCapAdd(NET_ADMIN)
+        	.withCapDrop(MKNOD).exec();
 
         InspectContainerResponse inspectContainerResponse  = dockerClient.inspectContainerCmd(container
                 .getId()).exec();
@@ -332,10 +330,10 @@ public class StartContainerCmdImplTest extends AbstractDockerClientTest {
         assertThat(inspectContainerResponse.getState().isRunning(), is(true));
 
         assertThat(Arrays.asList(inspectContainerResponse.getHostConfig().getCapAdd()),
-                contains("NET_ADMIN"));
+                contains(NET_ADMIN));
         
         assertThat(Arrays.asList(inspectContainerResponse.getHostConfig().getCapDrop()),
-                contains("MKNOD"));  
+                contains(MKNOD));  
     }
 	
 	@Test
