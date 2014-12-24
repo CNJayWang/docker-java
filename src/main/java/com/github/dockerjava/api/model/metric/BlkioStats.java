@@ -9,7 +9,7 @@ public class BlkioStats {
 	@JsonProperty("io_service_bytes_recursive")
 	private BlkioStatEntry[] ioServiceBytesRecursive;
 	
-	@JsonProperty("io_serviced_recusrive")
+	@JsonProperty("io_serviced_recursive")
 	private BlkioStatEntry[] ioServicedRecursive;
 	
 	@JsonProperty("io_queue_recursive")
