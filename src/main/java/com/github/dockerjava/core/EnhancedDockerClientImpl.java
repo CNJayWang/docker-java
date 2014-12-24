@@ -28,7 +28,9 @@ import com.github.dockerjava.jaxrs.util.CommandUtils;
 public class EnhancedDockerClientImpl extends DockerClientImpl implements EnhancedDockerClient {
 	
 	private EnhancedDockerClientImpl() {
-		this(DockerClientConfig.createDefaultConfigBuilder().build());
+		this(DockerClientConfig.createDefaultConfigBuilder()
+                .withLoggingFilter(false)
+                .build());
 	}
 
 	private EnhancedDockerClientImpl(String serverUrl) {
