@@ -2,6 +2,7 @@ package com.github.dockerjava.core.command;
 
 import static com.github.dockerjava.api.model.AccessMode.ro;
 import static com.github.dockerjava.api.model.Capability.*;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -14,10 +15,12 @@ import static org.hamcrest.Matchers.startsWith;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.DockerException;
 import com.github.dockerjava.api.NotFoundException;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
+import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.model.*;
 
 import org.testng.ITestResult;
@@ -81,16 +84,47 @@ public class StartContainerCmdImplTest extends AbstractDockerClientTest {
 		inspectContainerResponse = dockerClient.inspectContainerCmd(container
 				.getId()).exec();
 
-        VolumeBind[] volumeBinds = inspectContainerResponse.getVolumes();
-        List<String> volumes = new ArrayList<String>();
-        for(VolumeBind bind :volumeBinds){
-            volumes.add(bind.getContainerPath());
-        }
-        assertThat(volumes,	contains(volume1.getPath(), volume2.getPath()));
+		assertContainerHasVolumes(inspectContainerResponse, volume1, volume2);
 
 		assertThat(Arrays.asList(inspectContainerResponse.getVolumesRW()),
 				contains(volume1, volume2));
 
+	}
+
+	@Test
+	public void startContainerWithVolumesFrom() throws DockerException {
+
+		Volume volume1 = new Volume("/opt/webapp1");
+		Volume volume2 = new Volume("/opt/webapp2");
+
+		String container1Name = UUID.randomUUID().toString();
+		
+		CreateContainerResponse container1 = dockerClient
+				.createContainerCmd("busybox").withCmd("sleep", "9999")
+				.withName(container1Name).exec();
+		LOG.info("Created container1 {}", container1.toString());
+
+		dockerClient.startContainerCmd(container1.getId()).withBinds(
+				new Bind("/src/webapp1", volume1), new Bind("/src/webapp2", volume2)).exec();
+		LOG.info("Started container1 {}", container1.toString());
+
+		InspectContainerResponse inspectContainerResponse1 = dockerClient.inspectContainerCmd(
+				container1.getId()).exec();
+
+		assertContainerHasVolumes(inspectContainerResponse1, volume1, volume2);
+
+
+		CreateContainerResponse container2 = dockerClient
+				.createContainerCmd("busybox").withCmd("sleep", "9999").exec();
+		LOG.info("Created container2 {}", container2.toString());
+
+		dockerClient.startContainerCmd(container2.getId()).withVolumesFrom(container1Name).exec();
+		LOG.info("Started container2 {}", container2.toString());
+
+		InspectContainerResponse inspectContainerResponse2 = dockerClient
+				.inspectContainerCmd(container2.getId()).exec();
+
+		assertContainerHasVolumes(inspectContainerResponse2, volume1, volume2);
 	}
 
 	@Test
@@ -386,4 +420,67 @@ public class StartContainerCmdImplTest extends AbstractDockerClientTest {
                 is(equalTo(restartPolicy)));
     }
 
+	@Test
+	public void existingHostConfigIsPreservedByBlankStartCmd() throws DockerException {
+	
+		String dnsServer = "8.8.8.8";
+	
+		// prepare a container with custom DNS 
+		CreateContainerResponse container = dockerClient
+				.createContainerCmd("busybox")
+				.withDns(dnsServer)
+				.withCmd("true").exec();
+	
+		LOG.info("Created container {}", container.toString());
+	
+		assertThat(container.getId(), not(isEmptyString()));
+	
+		// start container _without_any_customization_ (important!) 
+		dockerClient.startContainerCmd(container.getId()).exec();
+	
+		InspectContainerResponse inspectContainerResponse = dockerClient.inspectContainerCmd(container
+				.getId()).exec();
+	
+		// The DNS setting survived.
+		assertThat(inspectContainerResponse.getHostConfig().getDns(), is(notNullValue()));
+		assertThat(Arrays.asList(inspectContainerResponse.getHostConfig().getDns()),
+				contains(dnsServer));
+	}
+
+	@Test
+	public void existingHostConfigIsResetByConfiguredStartCmd() throws DockerException {
+		// As of version 1.3.2, Docker assumes that you either configure a container
+		// when creating it or when starting it, but not mixing both. 
+		// See https://github.com/docker-java/docker-java/pull/111
+		// If this test starts to fail, this behavior changed and a review of implementation
+		// and documentation might be needed.
+	
+		String dnsServer = "8.8.8.8";
+	
+		// prepare a container with custom DNS 
+		CreateContainerResponse container = dockerClient
+				.createContainerCmd("busybox")
+				.withDns(dnsServer)
+				.withCmd("true").exec();
+	
+		LOG.info("Created container {}", container.toString());
+	
+		assertThat(container.getId(), not(isEmptyString()));
+	
+		// modify another setting in start command. Leave DNS unchanged. 
+		dockerClient.startContainerCmd(container.getId()).withPublishAllPorts(true).exec();
+	
+		InspectContainerResponse inspectContainerResponse = dockerClient.inspectContainerCmd(container
+				.getId()).exec();
+		
+		// although start did not modify DNS Settings, they were reset to their default.
+		assertThat(inspectContainerResponse.getHostConfig().getDns(), is(nullValue(String[].class)));
+	}
+
+	@Test
+	public void anUnconfiguredCommandSerializesToEmptyJson() throws Exception {
+		ObjectMapper objectMapper = new ObjectMapper();
+		StartContainerCmd command = dockerClient.startContainerCmd("");
+		assertThat(objectMapper.writeValueAsString(command), is("{}"));
+	}
 }

@@ -1,10 +1,18 @@
 Change Log
 ===
 
+docker-java-0.10.5-SNAPSHOT
+---
+  
+ * [#118](https://github.com/docker-java/docker-java/pull/118) Use chunked encoding when passing the docker image 
+ * [#115](https://github.com/docker-java/docker-java/pull/115) Polish RestartPolicy
+ * [#114](https://github.com/docker-java/docker-java/pull/114) Fix CreateContainerCmdImpl.withVolumesFrom()
+ * [#111](https://github.com/docker-java/docker-java/pull/111) Allow to send empty messages in StartContainerCmd  
+
 docker-java-0.10.4
 ---
 
- * [#108](https://github.com/docker-java/docker-java/pull/108) Support tag in push image command  
+ * [#109](https://github.com/docker-java/docker-java/pull/109) Support tag in push image command  
  * [#106](https://github.com/docker-java/docker-java/pull/106) Allow to manage Linux capabilities in CreateContainerCmd  
  * [#105](https://github.com/docker-java/docker-java/pull/105) Allow to pass HostConfig when creating a container 
  * [#103](https://github.com/docker-java/docker-java/pull/103) Make GoLangMatchFileFilter work on Windows 

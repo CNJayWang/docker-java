@@ -3,7 +3,7 @@
 
 Java API client for [Docker](http://docs.docker.io/ "Docker")
 
-Supports a subset of the Docker Client API v1.15, Docker Server version 1.3.0
+Supports a subset of the Docker Client API v1.15, Docker Server version 1.3.2
 
 <b>The current implementation is based on Jersey 2.x and therefore classpath incompatible with older Jersey 1.x dependent libraries!</b>
 
@@ -59,7 +59,7 @@ Run build without integration tests:
     <dependency>
           <groupId>com.github.docker-java</groupId>
           <artifactId>docker-java</artifactId>
-          <version>0.10.3</version>
+          <version>0.10.4</version>
     </dependency>
 
 ### Latest SNAPSHOT version
@@ -69,7 +69,7 @@ You can find the latest SNAPSHOT version including javadoc and source files on [
     <dependency>
           <groupId>com.github.docker-java</groupId>
           <artifactId>docker-java</artifactId>
-          <version>0.10.4-SNAPSHOT</version>
+          <version>0.10.5-SNAPSHOT</version>
     </dependency>
 
 ## Documentation
